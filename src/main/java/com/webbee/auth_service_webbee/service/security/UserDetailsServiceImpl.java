@@ -1,5 +1,6 @@
 package com.webbee.auth_service_webbee.service.security;
 
+import com.webbee.auth_service_webbee.model.Role;
 import com.webbee.auth_service_webbee.model.security.CustomUserDetails;
 import com.webbee.auth_service_webbee.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                             user.getUsername(),
                             user.getPassword(),
                             user.getRoles().stream()
-                                            .map(SimpleGrantedAuthority::new)
+                                            .map(Role::getName)
+                                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                                             .collect(Collectors.toSet()),
                             user.getEmail()
                         )

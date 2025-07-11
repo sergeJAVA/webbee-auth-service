@@ -7,14 +7,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.validation.annotation.Validated;
 
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Validated
 public class RegistrationRequest {
 
     @NotBlank(message = "The username cannot be blank")
@@ -25,6 +23,7 @@ public class RegistrationRequest {
     private String password;
 
     @NotBlank(message = "The email cannot be blank")
+    @Size(min = 8, message = "The email must be at least 8 characters long")
     private String email;
 
 }

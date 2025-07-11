@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-users-table
+      author: sergej
+      sqlFile:
+        path: 001_create_table_users.sql
+        encoding: UTF-8
+        relativeToChangeLogFile: true
+  - changeSet:
+      id: create-roles-table
+      author: sergej
+      sqlFile:
+        path: 002_create_table_roles.sql
+        encoding: UTF-8
+        relativeToChangeLogFile: true
+  - changeSet:
+      id: create-user-roles-table
+      author: sergej
+      sqlFile:
+        path: 003_create_table_user_roles.sql
+        encoding: UTF-8
+        relativeToChangeLogFile: true
+  - changeSet:
+      id: load-roles-data
+      author: sergej
+      changes:
+        - loadData:
+            file: classpath:db/changelog/data/roles.csv
+            tableName: roles
+            encoding: UTF-8
