@@ -2,7 +2,19 @@ package com.webbee.auth_service_webbee.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Validated
 public class RegistrationRequest {
 
     @NotBlank(message = "The username cannot be blank")
