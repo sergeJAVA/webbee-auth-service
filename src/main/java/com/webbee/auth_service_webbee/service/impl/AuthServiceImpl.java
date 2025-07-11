@@ -21,9 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,13 +79,11 @@ public class AuthServiceImpl implements AuthService {
 
             // Сохраняем нового пользователя после всех проверок
             Set<Role> roles = roleRepository.findByName("USER").stream().collect(Collectors.toSet());
-            String salt = generateSalt();
             userRepository.save(User.builder()
                     .username(request.getUsername())
-                    .password(passwordEncoder.encode(salt + request.getPassword()))
+                    .password(passwordEncoder.encode(request.getPassword()))
                     .email(request.getEmail())
                     .roles(roles)
-                    .salt(salt)
                     .build()
             );
 
@@ -106,16 +102,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public AuthStatusResponse login(LoginRequest request) {
-        String salt = "";
         Optional<User> existingUser = userRepository.findByUsername(request.getUsername());
-
-        if (existingUser.isPresent()) {
-            salt = existingUser.get().getSalt();
-        }
-
         try {
             Authentication authentication = authenticationProvider.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), salt + request.getPassword())
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
 
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -155,13 +145,6 @@ public class AuthServiceImpl implements AuthService {
         int atIndex = email.indexOf('@');
         int dotIndex = email.lastIndexOf('.');
         return atIndex > 0 && dotIndex > atIndex && dotIndex < email.length() - 1;
-    }
-
-    private String generateSalt() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] salt = new byte[16];
-        secureRandom.nextBytes(salt);
-        return Base64.getEncoder().encodeToString(salt);
     }
 
 }

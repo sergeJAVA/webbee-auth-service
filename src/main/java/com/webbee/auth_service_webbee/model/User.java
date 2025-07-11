@@ -40,9 +40,6 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "salt", nullable = false)
-    private String salt;
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
