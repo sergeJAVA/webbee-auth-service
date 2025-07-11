@@ -1,9 +1,10 @@
 package com.webbee.auth_service_webbee.service.security;
 
-import com.webbee.auth_service_webbee.model.Role;
 import com.webbee.auth_service_webbee.model.security.CustomUserDetails;
 import com.webbee.auth_service_webbee.model.security.TokenData;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.SneakyThrows;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,25 +40,23 @@ public class JwtService {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public Set<Role> getRolesFromToken(String token) {
-        return getClaimFromToken(token, (Function<Claims, Set<Role>>) claims -> claims.get("roles", Set.class));
+    public List<String> getRolesFromToken(String token) {
+        return getClaimFromToken(token, (Function<Claims, List<String>>) claims -> claims.get("roles", List.class));
     }
-
 
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimResolver) {
         return claimResolver.apply(getAllClaimsFromToken(token));
     }
 
     @SneakyThrows
-    private Claims getAllClaimsFromToken(String token){
-        try{
+    private Claims getAllClaimsFromToken(String token) {
+        try {
             return Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Error! Wrong argument passed!");
         }
 
@@ -68,11 +67,21 @@ public class JwtService {
                 .token(token)
                 .username(getUserNameFromToken(token))
                 .authorities(getRolesFromToken(token).stream()
-                        .map(Role::getName)
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList()))
                 .id(getUserIdFromToken(token))
                 .build();
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            return getAllClaimsFromToken(token).getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            log.error("Error while parsing token for expiration check: {}", e.getMessage());
+            return true;
+        }
     }
 
     public String generateJwtToken(CustomUserDetails userDetails, Long userId) {
