@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
             // Проверка уникальности почты
             if (isEmailExist(request.getEmail())) {
-
+                log.info("The email is already taken. Email: {}", request.getEmail());
                 response = AuthStatusResponse.builder()
                         .code(HttpStatus.BAD_REQUEST.value())
                         .state("The user with such email <<" + request.getEmail() + ">> already exists")

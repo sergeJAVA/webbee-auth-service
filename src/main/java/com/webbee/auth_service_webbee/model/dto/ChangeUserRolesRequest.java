@@ -8,6 +8,12 @@ import lombok.Setter;
 
 import java.util.Set;
 
+/**
+ * {@code ChangeUserRolesRequest} представляет тело запроса для изменения ролей пользователя.
+ * <p>
+ * Он включает имя пользователя, для которого нужно изменить роли, и набор ролей для назначения.
+ * </p>
+ */
 @Builder
 @Getter
 @Setter

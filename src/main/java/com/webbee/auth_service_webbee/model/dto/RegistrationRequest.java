@@ -8,6 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * {@code RegistrationRequest} представляет тело запроса для регистрации нового пользователя.
+ * <p>
+ * Оно включает имя пользователя, пароль и адрес электронной почты для нового пользователя.
+ * Поля проверяются на пустоту и соответствие минимальным требованиям к длине.
+ * </p>
+ */
 @Builder
 @Getter
 @Setter

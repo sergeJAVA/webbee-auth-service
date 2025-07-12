@@ -38,8 +38,8 @@ public class SecurityConfig {
                         request
                                 .requestMatchers("/auth/signup", "/auth/signin").permitAll()
                                 .requestMatchers("/user-roles/save").hasRole("ADMIN")
-                                .anyRequest().authenticated())
-
+                                .requestMatchers("/user-roles/{login}").authenticated()
+                                .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headersConfigurer ->
                         headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))

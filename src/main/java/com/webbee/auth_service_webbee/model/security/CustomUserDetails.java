@@ -6,6 +6,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+/**
+ * {@code CustomUserDetails} — это реализация интерфейса {@link UserDetails} из Spring Security.
+ * <p>
+ * Он предоставляет основную информацию о пользователе для фреймворка безопасности, включая имя пользователя,
+ * пароль, права доступа (роли). Этот класс используется для построения объекта
+ * аутентификации, когда пользователь успешно входит в систему или аутентифицируется через JWT-токен.
+ * </p>
+ */
 public class CustomUserDetails implements UserDetails {
 
     private String username;
@@ -14,6 +22,14 @@ public class CustomUserDetails implements UserDetails {
     @Getter
     private String email;
 
+    /**
+     * Создает новый экземпляр {@code CustomUserDetails}.
+     *
+     * @param username    Имя пользователя.
+     * @param password    Пароль пользователя.
+     * @param authorities Коллекция предоставленных прав доступа (ролей) для пользователя.
+     * @param email       Адрес электронной почты пользователя.
+     */
     public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities, String email) {
         this.username = username;
         this.password = password;

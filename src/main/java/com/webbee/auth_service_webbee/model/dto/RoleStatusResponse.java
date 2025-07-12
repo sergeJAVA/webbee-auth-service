@@ -7,6 +7,12 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+/**
+ * {@code RoleStatusResponse} представляет структуру ответа после попытки изменения ролей пользователя.
+ * <p>
+ * Он включает сообщение о статусе, код HTTP-статуса, отметку времени, имя пользователя и обновленный список ролей.
+ * </p>
+ */
 @Builder
 @Getter
 @Setter

@@ -17,6 +17,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * {@code JwtRequestFilter} — это компонент Spring, который фильтрует входящие HTTP-запросы
+ * для проверки JWT-токенов и настройки контекста Spring Security.
+ * <p>
+ * Он расширяет {@link OncePerRequestFilter}, чтобы гарантировать выполнение только один раз за запрос.
+ * Этот фильтр извлекает JWT-токен из запроса, проверяет его, и если он действителен и не истек,
+ * аутентифицирует пользователя, устанавливая {@link TokenAuthentication} в {@link SecurityContextHolder}.
+ * Если токен истек, он отправляет HTTP-ответ с ошибкой 401 Unauthorized.
+ * </p>
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

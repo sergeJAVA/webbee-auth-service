@@ -18,6 +18,13 @@ import lombok.NoArgsConstructor;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * {@code User} представляет сущность пользователя в приложении.
+ * <p>
+ * Он содержит данные пользователя, такие как имя пользователя, пароль, электронная почта,
+ * и коллекцию связанных ролей.
+ * </p>
+ */
 @Data
 @Entity
 @Table(name = "users")

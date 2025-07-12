@@ -12,6 +12,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
+/**
+ * {@code UserDetailsServiceImpl} — это сервисный класс, который реализует интерфейс {@link UserDetailsService}
+ * из Spring Security.
+ * <p>
+ * Он отвечает за загрузку данных пользователя по его имени пользователя,
+ * что необходимо для процесса аутентификации Spring Security.
+ * </p>
+ */
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {

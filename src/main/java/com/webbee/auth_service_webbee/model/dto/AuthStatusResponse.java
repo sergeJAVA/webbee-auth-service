@@ -6,6 +6,13 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * {@code AuthStatusResponse} представляет структуру ответа для операций, связанных с аутентификацией,
+ * таких как успешный вход или регистрация.
+ * <p>
+ * Он включает сообщение о статусе, код HTTP-статуса, отметку времени и JWT-токен.
+ * </p>
+ */
 @Builder
 @Getter
 @Setter

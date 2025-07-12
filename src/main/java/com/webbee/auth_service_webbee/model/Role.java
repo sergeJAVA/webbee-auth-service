@@ -11,6 +11,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * {@code Role} представляет сущность роли в приложении.
+ * <p>
+ * Роли хранятся в таблице "roles" и имеют уникальное имя.
+ * </p>
+ */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

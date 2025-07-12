@@ -13,6 +13,10 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * {@code DataInit} — это компонент, отвечающий за инициализацию данных
+ * пользователя в базе данных при запуске приложения.
+ */
 @Component
 @RequiredArgsConstructor
 public class DataInit {

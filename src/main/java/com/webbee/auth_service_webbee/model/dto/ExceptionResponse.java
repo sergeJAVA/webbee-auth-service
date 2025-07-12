@@ -5,6 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * {@code ExceptionResponse} представляет общую структуру ответа об ошибке, возвращаемую API.
+ * <p>
+ * Она включает сообщение об ошибке и связанный с ней код HTTP-статуса.
+ * </p>
+ */
 @Getter
 @Setter
 @AllArgsConstructor
