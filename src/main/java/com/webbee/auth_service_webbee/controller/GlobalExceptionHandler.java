@@ -1,9 +1,11 @@
 package com.webbee.auth_service_webbee.controller;
 
+import com.webbee.auth_service_webbee.exception.RoleAccessException;
 import com.webbee.auth_service_webbee.exception.RoleNotFoundException;
 import com.webbee.auth_service_webbee.model.dto.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +37,13 @@ public class GlobalExceptionHandler {
         log.info(ex.getMessage());
         ExceptionResponse response = new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RoleAccessException.class)
+    public ResponseEntity<ExceptionResponse> handleRoleAccessException(RoleAccessException ex) {
+        log.info(ex.getMessage());
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage(), ex.getStatus().value());
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getCode()));
     }
 
 }

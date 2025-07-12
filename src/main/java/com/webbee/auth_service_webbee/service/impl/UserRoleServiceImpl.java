@@ -5,17 +5,18 @@ import com.webbee.auth_service_webbee.model.Role;
 import com.webbee.auth_service_webbee.model.User;
 import com.webbee.auth_service_webbee.model.dto.ChangeUserRolesRequest;
 import com.webbee.auth_service_webbee.model.dto.RoleStatusResponse;
-import com.webbee.auth_service_webbee.model.dto.UserDto;
+import org.springframework.transaction.annotation.Transactional;
 import com.webbee.auth_service_webbee.repository.RoleRepository;
 import com.webbee.auth_service_webbee.repository.UserRepository;
 import com.webbee.auth_service_webbee.service.UserRoleService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,14 +67,21 @@ public class UserRoleServiceImpl implements UserRoleService {
                     .build();
 
         }
-
-
         return response;
     }
 
     @Override
-    public UserDto getRoles(String username) {
-        return null;
+    @Transactional(readOnly = true)
+    public List<String> getRoles(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return user.getRoles().stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
 }
