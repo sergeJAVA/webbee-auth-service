@@ -1,5 +1,8 @@
 package com.webbee.auth_service_webbee.controller;
 
+import com.webbee.auth_service_webbee.exception.RoleNotFoundException;
+import com.webbee.auth_service_webbee.model.dto.ExceptionResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -24,6 +28,13 @@ public class GlobalExceptionHandler {
         });
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleRoleException(RoleNotFoundException ex) {
+        log.info(ex.getMessage());
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

@@ -1,11 +1,12 @@
 package com.webbee.auth_service_webbee.config;
 
 import com.webbee.auth_service_webbee.config.filter.JwtRequestFilter;
+import com.webbee.auth_service_webbee.entryPoint.CustomAccessDeniedHandler;
+import com.webbee.auth_service_webbee.entryPoint.CustomAuthenticationEntryPoint;
 import com.webbee.auth_service_webbee.service.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,7 +17,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -28,13 +28,17 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtRequestFilter jwtRequestFilter;
 
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(request ->
                         request
                                 .requestMatchers("/auth/signup", "/auth/signin").permitAll()
-                                .requestMatchers("/auth/hello").authenticated())
+                                .requestMatchers("/user-roles/save").hasRole("ADMIN")
+                                .anyRequest().authenticated())
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headersConfigurer ->
@@ -42,7 +46,8 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagementConfigurer ->
                         sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                        exceptionHandlingConfigurer.authenticationEntryPoint(authenticationEntryPoint)
+                                .accessDeniedHandler(customAccessDeniedHandler))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
