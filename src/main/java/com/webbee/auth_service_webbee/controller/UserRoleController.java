@@ -82,7 +82,6 @@ public class UserRoleController {
         String authenticatedUserLogin = principal.getName();
         List<String> authenticatedUserRoles = userRoleService.getRoles(authenticatedUserLogin);
 
-        // если есть роль админа, то мы можем получить роль любого пользователя
         if (authenticatedUserRoles.contains("ADMIN")) {
             List<String> userRoles = userRoleService.getRoles(login);
             if (userRoles.isEmpty()) {
@@ -90,7 +89,6 @@ public class UserRoleController {
             }
             return new ResponseEntity<>(userRoles, HttpStatus.OK);
         } else {
-            // если нет роли админа, то мы можем посмотреть только свои роли
             if (authenticatedUserLogin.equals(login)) {
                 List<String> userRoles = userRoleService.getRoles(login);
                 return new ResponseEntity<>(userRoles, HttpStatus.OK);

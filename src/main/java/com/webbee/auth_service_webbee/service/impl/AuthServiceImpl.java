@@ -42,7 +42,6 @@ public class AuthServiceImpl implements AuthService {
     public AuthStatusResponse registration(RegistrationRequest request) {
         AuthStatusResponse response;
 
-        // Валидация почты
         if (!isEmailValid(request.getEmail())) {
             response = AuthStatusResponse.builder()
                     .code(HttpStatus.BAD_REQUEST.value())
@@ -53,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
             return response;
         }
 
-        // Существует ли уже такой логин
         if (isUserExist(request.getUsername())) {
 
             response = AuthStatusResponse.builder()
@@ -65,7 +63,6 @@ public class AuthServiceImpl implements AuthService {
             log.info("The user with this username already exist");
         } else {
 
-            // Проверка уникальности почты
             if (isEmailExist(request.getEmail())) {
                 log.info("The email is already taken. Email: {}", request.getEmail());
                 response = AuthStatusResponse.builder()
@@ -77,7 +74,6 @@ public class AuthServiceImpl implements AuthService {
                 return response;
             }
 
-            // Сохраняем нового пользователя после всех проверок
             Set<Role> roles = roleRepository.findByName("USER").stream().collect(Collectors.toSet());
             userRepository.save(User.builder()
                     .username(request.getUsername())
@@ -129,14 +125,29 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * Вспомогательный метод для проверки существования пользователя
+     * @param username
+     * @return {@code true} или {@code false}
+     */
     private boolean isUserExist(String username) {
         return userRepository.findByUsername(username).isPresent();
     }
 
+    /**
+     * Вспомогательный метод для проверки существования почты
+     * @param email
+     * @return {@code true} или {@code false}
+     */
     private boolean isEmailExist(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 
+    /**
+     * Вспомогательный метод для проверки валидности почты
+     * @param email
+     * @return {@code true} или {@code false}
+     */
     private boolean isEmailValid(String email) {
         if (email == null || email.isEmpty()) {
             return false;
