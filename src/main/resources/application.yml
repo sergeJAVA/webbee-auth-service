@@ -14,6 +14,10 @@ spring:
     hibernate:
       ddl-auto: none
   liquibase:
-    enabled: false
+    enabled: true
     change-log: classpath:db/changelog/changelog-master.yaml
-  #    drop-first: true
+#    drop-first: true
+
+jwt:
+  secret: secretkeyPasswordForAuth12312312312313213123123sdfsdf
+  life-time: 1800000

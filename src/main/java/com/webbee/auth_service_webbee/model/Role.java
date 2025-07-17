@@ -1,0 +1,35 @@
+package com.webbee.auth_service_webbee.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * {@code Role} представляет сущность роли в приложении.
+ * <p>
+ * Роли хранятся в таблице "roles" и имеют уникальное имя.
+ * </p>
+ */
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
+@Table(name = "roles")
+public class Role {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
+
+}
