@@ -2,6 +2,18 @@ server:
   port: 8081
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            redirect-url: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - openid
+              - email
+              - profile
   application:
     name: auth-service-webbee
   datasource:
@@ -17,6 +29,16 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/changelog-master.yaml
 #    drop-first: true
+
+
+
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.security.oauth2: DEBUG
+
+
 
 jwt:
   secret: secretkeyPasswordForAuth12312312312313213123123sdfsdf

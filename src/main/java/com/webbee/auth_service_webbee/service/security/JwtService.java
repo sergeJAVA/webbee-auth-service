@@ -1,5 +1,7 @@
 package com.webbee.auth_service_webbee.service.security;
 
+import com.webbee.auth_service_webbee.model.Role;
+import com.webbee.auth_service_webbee.model.User;
 import com.webbee.auth_service_webbee.model.security.CustomUserDetails;
 import com.webbee.auth_service_webbee.model.security.TokenData;
 import io.jsonwebtoken.Claims;
@@ -173,6 +175,23 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + lifeTime))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                .compact();
+    }
+
+    public String generateJwtToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", user.getUsername());
+        claims.put("roles", user.getRoles().stream()
+                .map(Role::getName)
+                .map(role -> "ROLE_" + role)
+                .collect(Collectors.toSet()));
+        claims.put("userId", user.getId());
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("userId", user.getId())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + lifeTime))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .compact();
     }

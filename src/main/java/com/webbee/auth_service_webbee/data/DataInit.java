@@ -1,5 +1,6 @@
 package com.webbee.auth_service_webbee.data;
 
+import com.webbee.auth_service_webbee.model.AuthType;
 import com.webbee.auth_service_webbee.model.Role;
 import com.webbee.auth_service_webbee.model.User;
 import com.webbee.auth_service_webbee.repository.RoleRepository;
@@ -44,6 +45,7 @@ public class DataInit {
                     .password(passwordEncoder.encode("password123"))
                     .email("admin@yandex.ru")
                     .roles(roles)
+                    .authType(AuthType.LOCAL)
                     .build();
             userRepository.save(admin);
         }

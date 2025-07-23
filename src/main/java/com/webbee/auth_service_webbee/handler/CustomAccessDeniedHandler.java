@@ -1,4 +1,4 @@
-package com.webbee.auth_service_webbee.entryPoint;
+package com.webbee.auth_service_webbee.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

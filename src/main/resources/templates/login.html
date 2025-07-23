@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<div class="container">
+    <h1>Вход</h1>
+    <form th:action="@{/auth/signin}" method="post">
+        <div class="form-group">
+            <label for="username">Логин:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="submit-btn">Войти</button>
+    </form>
+
+    <div class="separator">ИЛИ</div>
+
+    <a href="http://localhost:8081/oauth2/authorization/google" class="google-btn">Войти через Google</a>
+</div>
+</body>
+</html>

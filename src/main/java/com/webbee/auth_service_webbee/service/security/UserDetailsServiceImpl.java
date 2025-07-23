@@ -30,6 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .map(user -> new CustomUserDetails(
+                            user.getId(),
                             user.getUsername(),
                             user.getPassword(),
                             user.getRoles().stream()

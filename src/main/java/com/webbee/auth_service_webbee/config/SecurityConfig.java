@@ -1,8 +1,9 @@
 package com.webbee.auth_service_webbee.config;
 
 import com.webbee.auth_service_webbee.config.filter.JwtRequestFilter;
-import com.webbee.auth_service_webbee.entryPoint.CustomAccessDeniedHandler;
+import com.webbee.auth_service_webbee.handler.CustomAccessDeniedHandler;
 import com.webbee.auth_service_webbee.entryPoint.CustomAuthenticationEntryPoint;
+import com.webbee.auth_service_webbee.handler.OAuth2AuthenticationSuccessHandler;
 import com.webbee.auth_service_webbee.service.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -31,20 +32,25 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/auth/signup", "/auth/signin").permitAll()
-                                .requestMatchers("/user-roles/save").hasRole("ADMIN")
-                                .requestMatchers("/user-roles/{login}").authenticated()
-                                .anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
+                                .requestMatchers("/user-roles/save").authenticated()
+                                .anyRequest().permitAll()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .loginPage("/loginForm")
+                )
                 .headers(headersConfigurer ->
                         headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .sessionManagement(sessionManagementConfigurer ->
-                        sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.authenticationEntryPoint(authenticationEntryPoint)
                                 .accessDeniedHandler(customAccessDeniedHandler))

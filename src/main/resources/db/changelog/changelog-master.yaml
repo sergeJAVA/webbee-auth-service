@@ -28,3 +28,10 @@ databaseChangeLog:
             file: classpath:db/changelog/data/roles.csv
             tableName: roles
             encoding: UTF-8
+  - changeSet:
+      id: add-auth-type-to-users
+      author: sergej
+      sqlFile:
+        path: 004_add_auth_type_to_users.sql
+        encoding: UTF-8
+        relativeToChangeLogFile: true
