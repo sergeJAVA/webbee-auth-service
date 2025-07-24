@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsServiceImpl;
+
     private final JwtRequestFilter jwtRequestFilter;
 
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
@@ -40,11 +41,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/user-roles/save").authenticated()
+                                .requestMatchers("/user-roles/**", "/success-page").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .failureUrl("/failure-page")
                         .loginPage("/loginForm")
                 )
                 .headers(headersConfigurer ->

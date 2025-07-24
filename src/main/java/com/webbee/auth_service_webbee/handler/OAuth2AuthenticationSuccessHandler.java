@@ -9,18 +9,21 @@ import com.webbee.auth_service_webbee.service.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
@@ -39,24 +42,33 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         if (email == null) {
             throw new IllegalStateException("Google did not return an email.");
         }
-        Set<Role> roles = roleRepository.findByName("USER").stream().collect(Collectors.toSet());
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = User.builder()
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        User user;
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+
+            if (user.getAuthType().equals(AuthType.LOCAL)) {
+                log.warn("User with email <<{}>> tried to login with Google, but is registered locally", email);
+                throw new OAuth2AuthenticationException("User is registered in another way.");
+            }
+
+        } else {
+            log.info("Registering new user with email <<{}>> via Google", email);
+            Set<Role> roles = roleRepository.findByName("USER").stream().collect(Collectors.toSet());
+            user = User.builder()
                     .username(name)
                     .email(email)
                     .password(null)
                     .roles(roles)
                     .authType(AuthType.GOOGLE)
                     .build();
-            return userRepository.save(newUser);
-        });
+            userRepository.save(user);
+        }
 
         String token = jwtService.generateJwtToken(user);
-
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/callback")
-                .queryParam("token", token)
-                .build().toUriString();
-
+        String targetUrl = "http://localhost:8081/oauth2/callback?token=" + token;
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 

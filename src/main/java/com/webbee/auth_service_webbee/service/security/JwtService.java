@@ -188,10 +188,10 @@ public class JwtService {
                 .collect(Collectors.toSet()));
         claims.put("userId", user.getId());
         return Jwts.builder()
-                .setSubject(user.getEmail())
-                .claim("userId", user.getId())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + lifeTime))
+                .claims(claims)
+                .subject(user.getEmail())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + lifeTime))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .compact();
     }

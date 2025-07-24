@@ -33,10 +33,10 @@ spring:
 
 
 
-logging:
-  level:
-    org.springframework.security: TRACE
-    org.springframework.security.oauth2: DEBUG
+#logging:
+#  level:
+#    org.springframework.security: TRACE
+#    org.springframework.security.oauth2: DEBUG
 
 
 

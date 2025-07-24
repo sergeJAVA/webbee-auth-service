@@ -147,41 +147,39 @@ class AuthServiceImplTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
-//    @Test
-//    @DisplayName("Должен успешно войти в систему пользователя и вернуть токен")
-//    void login_Success() {
-//        LoginRequest request = new LoginRequest("testuser", "password123");
-//        CustomUserDetails userDetails = new CustomUserDetails(
-//                testUser.getUsername(),
-//                testUser.getPassword(),
-//                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-//                testUser.getEmail()
-//        );
-//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//
-//        when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(testUser));
-//        when(authenticationProvider.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
-//        when(jwtService.generateJwtToken(userDetails, testUser.getId())).thenReturn("jwt_token");
-//
-//        AuthStatusResponse response = authService.login(request);
-//
-//        assertNotNull(response);
-//        assertEquals(HttpStatus.OK.value(), response.getCode());
-//        assertEquals("User has been authorized", response.getState());
-//        assertEquals("jwt_token", response.getToken());
-//        assertNotNull(response.getTimestamp());
-//
-//        verify(userRepository, times(1)).findByUsername(request.getUsername());
-//        verify(authenticationProvider, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
-//        verify(jwtService, times(1)).generateJwtToken(userDetails, testUser.getId());
-//    }
+    @Test
+    @DisplayName("Должен успешно войти в систему пользователя и вернуть токен")
+    void login_Success() {
+        LoginRequest request = new LoginRequest("testuser", "password123");
+        CustomUserDetails userDetails = new CustomUserDetails(
+                testUser.getId(),
+                testUser.getUsername(),
+                testUser.getPassword(),
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                testUser.getEmail()
+        );
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        when(authenticationProvider.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+        when(jwtService.generateJwtToken(userDetails, testUser.getId())).thenReturn("jwt_token");
+
+        AuthStatusResponse response = authService.login(request);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK.value(), response.getCode());
+        assertEquals("User has been authorized", response.getState());
+        assertEquals("jwt_token", response.getToken());
+        assertNotNull(response.getTimestamp());
+
+        verify(authenticationProvider, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(jwtService, times(1)).generateJwtToken(userDetails, testUser.getId());
+    }
 
     @Test
     @DisplayName("Должен возвращать FORBIDDEN для неправильных учетных данных при входе в систему")
     void login_IncorrectCredentials() {
         LoginRequest request = new LoginRequest("testuser", "wrongpassword");
 
-        when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(testUser));
         when(authenticationProvider.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
 
@@ -193,7 +191,6 @@ class AuthServiceImplTest {
         assertNull(response.getToken());
         assertNotNull(response.getTimestamp());
 
-        verify(userRepository, times(1)).findByUsername(request.getUsername());
         verify(authenticationProvider, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtService, never()).generateJwtToken(any(CustomUserDetails.class), anyLong());
     }
@@ -203,7 +200,6 @@ class AuthServiceImplTest {
     void login_UserNotFound() {
         LoginRequest request = new LoginRequest("nonexistentuser", "password123");
 
-        when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.empty());
         when(authenticationProvider.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
 
@@ -215,7 +211,6 @@ class AuthServiceImplTest {
         assertNull(response.getToken());
         assertNotNull(response.getTimestamp());
 
-        verify(userRepository, times(1)).findByUsername(request.getUsername());
         verify(authenticationProvider, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtService, never()).generateJwtToken(any(CustomUserDetails.class), anyLong());
     }
