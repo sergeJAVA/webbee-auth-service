@@ -39,10 +39,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
-        if (email == null) {
-            throw new IllegalStateException("Google did not return an email.");
-        }
-
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         User user;
