@@ -1,6 +1,9 @@
 server:
   port: 8081
 
+app:
+  redirect-url: http://localhost:8081/oauth2/callback
+
 spring:
   security:
     oauth2:

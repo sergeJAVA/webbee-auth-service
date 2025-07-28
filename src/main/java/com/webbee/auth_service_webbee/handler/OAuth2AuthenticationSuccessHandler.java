@@ -10,11 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -29,6 +31,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+
+    @Value("${app.redirect-url}")
+    private String redirectUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -64,7 +69,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         String token = jwtService.generateJwtToken(user);
-        String targetUrl = "http://localhost:8081/oauth2/callback?token=" + token;
+        String targetUrl = UriComponentsBuilder.fromUriString(redirectUrl)
+                .queryParam("token", token)
+                .build().toString();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
