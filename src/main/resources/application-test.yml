@@ -1,0 +1,32 @@
+server:
+  port: 8081
+
+app:
+  redirect-url: http://localhost:8081/oauth2/callback
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-client-id
+            client-secret: test-secret
+            redirect-url: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - openid
+              - email
+              - profile
+  application:
+    name: auth-service-webbee
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/changelog-master.yaml
+
+jwt:
+  secret: secretkeyPasswordForAuth12312312312313213123123sdfsdf
+  life-time: 1800000
