@@ -1,5 +1,6 @@
 package com.webbee.auth_service_webbee.service.impl;
 
+import com.webbee.auth_service_webbee.model.AuthType;
 import com.webbee.auth_service_webbee.model.Role;
 import com.webbee.auth_service_webbee.model.User;
 import com.webbee.auth_service_webbee.model.dto.AuthStatusResponse;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -80,6 +80,7 @@ public class AuthServiceImpl implements AuthService {
                     .password(passwordEncoder.encode(request.getPassword()))
                     .email(request.getEmail())
                     .roles(roles)
+                    .authType(AuthType.LOCAL)
                     .build()
             );
 
@@ -98,14 +99,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public AuthStatusResponse login(LoginRequest request) {
-        Optional<User> existingUser = userRepository.findByUsername(request.getUsername());
         try {
             Authentication authentication = authenticationProvider.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
 
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            Long userId = existingUser.get().getId();
+            Long userId = userDetails.getId();
             String token = jwtService.generateJwtToken(userDetails, userId);
 
             return AuthStatusResponse.builder()
