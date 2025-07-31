@@ -3,6 +3,7 @@ package com.webbee.auth_service_webbee.model.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
+@ToString
 public class RoleStatusResponse {
 
     private String state;

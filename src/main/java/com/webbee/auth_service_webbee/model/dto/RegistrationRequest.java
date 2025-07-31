@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * {@code RegistrationRequest} представляет тело запроса для регистрации нового пользователя.
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class RegistrationRequest {
 
     @NotBlank(message = "The username cannot be blank")
